@@ -83,7 +83,15 @@ public class Tile {
         if (value <= 64) {
             font = Game.main.deriveFont(36f);
         } else
-            g.setFont(font);
+            font = Game.main;
 
+        g.setFont(font);
+
+        // centred message
+        int drawX = WIDTH / 2 - DrawUtils.getMessageWidth(String.valueOf(value), font, g) / 2;
+        int drawY = HEIGHT / 2 + DrawUtils.getMessageHeight(String.valueOf(value), font, g);
+
+        g.drawString(String.valueOf(value), drawX, drawY);
+        g.dispose();
     }
 }
