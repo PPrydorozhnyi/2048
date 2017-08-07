@@ -8,9 +8,9 @@ import java.awt.image.BufferedImage;
  */
 public class Tile {
 
-    public static final int WIDTH = 80;
-    public static final int HEIGHT = 80;
-    public static final int SLIDE_WIDTH = 20;
+    public static final int WIDTH = 100;
+    public static final int HEIGHT = 100;
+    public static final int SLIDE_SPEED = 30;
     public static final int ARC_WIDTH = 15;
     public static final int ARC_HEIGHT = 15;
 
@@ -33,7 +33,7 @@ public class Tile {
 
     private Point slideTo;
 
-    private boolean canCombine;
+    private boolean canCombine = true;
 
     public boolean canCombine() {
         return canCombine;
@@ -43,10 +43,28 @@ public class Tile {
         this.canCombine = canCombine;
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
     public Tile(int value, int x, int y) {
         this.x = x;
         this.y = y;
         this.value = value;
+        slideTo = new Point(x, y);
+
         tileImage = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
         drawImage();
     }
@@ -65,7 +83,7 @@ public class Tile {
                 textColor = new Color(0,0,0);
                 break;
             case 8:
-                backgroundColor = new Color(0xf70d3d);
+                backgroundColor = new Color(0xf79d3d);
                 textColor = new Color(0xffffff);
                 break;
             case 16:
@@ -106,7 +124,8 @@ public class Tile {
                 break;
         }
 
-        g.setColor(new Color(0,0,0));
+        //g.setColor(new Color(0,0,0));
+        g.setColor(Color.darkGray);
         g.fillRect(0,0,WIDTH, HEIGHT);
 
         g.setColor(backgroundColor);
@@ -143,6 +162,7 @@ public class Tile {
 
     public void setValue(int value) {
         this.value = value;
+        drawImage();
     }
 
 }

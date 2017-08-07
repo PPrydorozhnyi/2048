@@ -14,8 +14,8 @@ public class Game extends JPanel implements KeyListener, Runnable{
 
     private static final long serialVersionUID = 1L;
     // because not resizeable
-    public static final int WIDTH = 400;
-    public static final int HEIGHT = 400;
+    public static final int WIDTH = 500;
+    public static final int HEIGHT = 500;
     public static final Font main = new Font("Comic Sans MS", Font.PLAIN, 28);
     private Thread game;
     private boolean running;
@@ -33,7 +33,7 @@ public class Game extends JPanel implements KeyListener, Runnable{
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         addKeyListener(this);
 
-        board = new GameBoard(WIDTH / 2 - GameBoard.BOARD_WIDTH / 2, HEIGHT - GameBoard.BOARD_HEIGHT - 10);
+        board = new GameBoard(WIDTH / 2 - GameBoard.BOARD_WIDTH / 2, HEIGHT - GameBoard.BOARD_HEIGHT - 25);
     }
 
     private void update() {
