@@ -369,7 +369,7 @@ public class GameBoard {
                 temp.setRow(newRow);
                 temp.setCol(newCol);
                 board[newRow][newCol].setSlideTo(temp);
-                //board[newRow][newCol].setCombineAnimation(true);
+                board[newRow][newCol].setCombineAnimation(true);
                 // add to score
             } // can not combine
             else

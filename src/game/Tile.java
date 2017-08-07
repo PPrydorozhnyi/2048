@@ -1,7 +1,9 @@
 package game;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+
 
 /**
  * Created by drake on 06/08/17.
@@ -20,8 +22,18 @@ public class Tile {
     private Color backgroundColor;
     private Color textColor;
     private Font font;
+    private Point slideTo;
+    private boolean canCombine = true;
     private int x;
     private int y;
+
+    // for animation
+    private boolean beginningAnimation;
+    private double scaleFirst = 0.1;
+    private BufferedImage beginningImage;
+    private boolean combineAnimation = false;
+    private double scaleCombine = 1.3;
+    private BufferedImage combineImage;
 
     public Point getSlideTo() {
         return slideTo;
@@ -30,10 +42,6 @@ public class Tile {
     public void setSlideTo(Point slideTo) {
         this.slideTo = slideTo;
     }
-
-    private Point slideTo;
-
-    private boolean canCombine = true;
 
     public boolean canCombine() {
         return canCombine;
@@ -64,6 +72,9 @@ public class Tile {
         this.y = y;
         this.value = value;
         slideTo = new Point(x, y);
+
+        beginningImage = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
+        combineImage = new BufferedImage(WIDTH * 2, HEIGHT * 2, BufferedImage.TYPE_INT_ARGB);
 
         tileImage = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
         drawImage();
@@ -150,10 +161,61 @@ public class Tile {
 
     public void update() {
 
+        AffineTransform transform = new AffineTransform();
+
+        if (beginningAnimation) {
+            // for scaling
+            //AffineTransform transform = new AffineTransform();
+            transform.translate(WIDTH / 2 - scaleFirst * WIDTH / 2, HEIGHT / 2 - scaleFirst * HEIGHT / 2 );
+            transform.scale(scaleFirst, scaleFirst);
+            Graphics2D g2d = (Graphics2D)beginningImage.getGraphics();
+            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            g2d.setColor(new Color(0,0,0,0));
+            g2d.fillRect(0,0,WIDTH, HEIGHT);
+            g2d.drawImage(tileImage, transform, null);
+            scaleFirst += 0.1;
+            g2d.dispose();
+
+            if (scaleFirst >= 1)
+                beginningAnimation = false;
+        } else if (combineAnimation) {
+
+            transform.translate(WIDTH / 2 - scaleCombine * WIDTH / 2, HEIGHT / 2 - scaleCombine * HEIGHT / 2 );
+            transform.scale(scaleCombine, scaleCombine);
+            Graphics2D g2d = (Graphics2D)combineImage.getGraphics();
+            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            g2d.setColor(new Color(0,0,0,0));
+            g2d.fillRect(0,0,WIDTH, HEIGHT);
+            g2d.drawImage(tileImage, transform, null);
+            scaleCombine -= 0.05;
+            g2d.dispose();
+
+            if (scaleCombine <= 1)
+                combineAnimation = false;
+
+        }
+
     }
 
     public void render(Graphics2D g) {
-        g.drawImage(tileImage, x, y, null);
+        if (beginningAnimation) {
+            g.drawImage(beginningImage, x, y, null);
+        } else if (combineAnimation) {
+            g.drawImage(combineImage, (int) (x + WIDTH / 2 - scaleCombine * WIDTH / 2),
+                    (int) (y + HEIGHT / 2 - scaleCombine * HEIGHT / 2), null);
+        } else
+            g.drawImage(tileImage, x, y, null);
+
+    }
+
+    public boolean isCombineAnimation() {
+        return combineAnimation;
+    }
+
+    public void setCombineAnimation(boolean combineAnimation) {
+        this.combineAnimation = combineAnimation;
+        if (combineAnimation)
+            scaleCombine = 1.3;
     }
 
     public int getValue() {
