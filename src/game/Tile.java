@@ -103,9 +103,21 @@ public class Tile {
 
         // centred message
         int drawX = WIDTH / 2 - DrawUtils.getMessageWidth(String.valueOf(value), font, g) / 2;
-        int drawY = HEIGHT / 2 + DrawUtils.getMessageHeight(String.valueOf(value), font, g);
+        int drawY = HEIGHT / 2 + DrawUtils.getMessageHeight(String.valueOf(value), font, g) / 2;
 
         g.drawString(String.valueOf(value), drawX, drawY);
         g.dispose();
+    }
+
+    public void update() {
+
+    }
+
+    public void render(Graphics2D g) {
+        g.drawImage(tileImage, x, y, null);
+    }
+
+    public int getValue() {
+        return value;
     }
 }
