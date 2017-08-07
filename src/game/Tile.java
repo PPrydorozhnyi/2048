@@ -23,6 +23,26 @@ public class Tile {
     private int x;
     private int y;
 
+    public Point getSlideTo() {
+        return slideTo;
+    }
+
+    public void setSlideTo(Point slideTo) {
+        this.slideTo = slideTo;
+    }
+
+    private Point slideTo;
+
+    private boolean canCombine;
+
+    public boolean canCombine() {
+        return canCombine;
+    }
+
+    public void setCanCombine(boolean canCombine) {
+        this.canCombine = canCombine;
+    }
+
     public Tile(int value, int x, int y) {
         this.x = x;
         this.y = y;
@@ -120,4 +140,9 @@ public class Tile {
     public int getValue() {
         return value;
     }
+
+    public void setValue(int value) {
+        this.value = value;
+    }
+
 }

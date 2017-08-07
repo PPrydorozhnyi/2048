@@ -1,5 +1,7 @@
 package game;
 
+import com.sun.rowset.internal.Row;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
@@ -42,9 +44,9 @@ public class GameBoard {
     private void createBoardImage() {
         int x, y;
 
-        Graphics2D g = (Graphics2D)gameBoard.getGraphics();
+        Graphics2D g = (Graphics2D) gameBoard.getGraphics();
         g.setColor(Color.darkGray);
-        g.fillRect(0, 0 , BOARD_WIDTH, BOARD_HEIGHT);
+        g.fillRect(0, 0, BOARD_WIDTH, BOARD_HEIGHT);
         g.setColor(Color.lightGray);
 
         for (int row = 0; row < ROWS; row++) {
@@ -70,7 +72,7 @@ public class GameBoard {
         Random random = new Random();
         boolean isValid = true;
 
-        while(isValid) {
+        while (isValid) {
             location = random.nextInt(ROWS * COLS);
             row = location / ROWS;
             col = location % COLS;
@@ -102,7 +104,7 @@ public class GameBoard {
 
         Tile current;
 
-        Graphics2D g2d = (Graphics2D)finalBoard.getGraphics();
+        Graphics2D g2d = (Graphics2D) finalBoard.getGraphics();
         g2d.drawImage(gameBoard, 0, 0, null);
 
         //draw tiles
@@ -140,25 +142,153 @@ public class GameBoard {
 
     public void checkKeys() {
         // move tiles left
-        if(Keyboard.typed(KeyEvent.VK_LEFT)) {
-            if(!hasStarted)
-                hasStarted = true;
+        if (Keyboard.typed(KeyEvent.VK_LEFT)) {
+            moveTiles(Direction.LEFT);
         }
 
-        if(Keyboard.typed(KeyEvent.VK_RIGHT)) {
-            if(!hasStarted)
-                hasStarted = true;
+        if (Keyboard.typed(KeyEvent.VK_RIGHT)) {
+            moveTiles(Direction.RIGHT);
         }
 
-        if(Keyboard.typed(KeyEvent.VK_UP)) {
-            if(!hasStarted)
-                hasStarted = true;
+        if (Keyboard.typed(KeyEvent.VK_UP)) {
+            moveTiles(Direction.UP);
         }
 
-        if(Keyboard.typed(KeyEvent.VK_DOWN)) {
-            if(!hasStarted)
-                hasStarted = true;
+        if (Keyboard.typed(KeyEvent.VK_DOWN)) {
+            moveTiles(Direction.DOWN);
         }
+
+        if (!hasStarted)
+            hasStarted = true;
+    }
+
+    private void moveTiles(Direction dir) {
+        //because everytime start with border
+        boolean canMove = false;
+        int horizontDirection = 0;
+        int verticalDirection = 0;
+        Tile current;
+
+        if (dir == Direction.LEFT) {
+            horizontDirection = -1;
+            for (int row = 0; row < ROWS; row++)
+                for (int col = 0; col < COLS; col++)
+                    if (!canMove)
+                        canMove = move(row, col, horizontDirection, verticalDirection, dir);
+                    else
+                        move(row, col, horizontDirection, verticalDirection, dir);
+        } else if (dir == Direction.RIGHT) {
+            horizontDirection = 1;
+            for (int row = 0; row < ROWS; row++)
+                for (int col = COLS - 1; col >= 0; col--)
+                    if (!canMove)
+                        canMove = move(row, col, horizontDirection, verticalDirection, dir);
+                    else
+                        move(row, col, horizontDirection, verticalDirection, dir);
+        } else if (dir == Direction.UP) {
+            verticalDirection = -1;
+            for (int row = 0; row < ROWS; row++)
+                for (int col = 0; col < COLS; col++)
+                    if (!canMove)
+                        canMove = move(row, col, horizontDirection, verticalDirection, dir);
+                    else
+                        move(row, col, horizontDirection, verticalDirection, dir);
+        } else if (dir == Direction.DOWN) {
+            verticalDirection = 1;
+            for (int row = ROWS - 1; row >= 0; row--)
+                for (int col = 0; col < COLS; col++)
+                    if (!canMove)
+                        canMove = move(row, col, horizontDirection, verticalDirection, dir);
+                    else
+                        move(row, col, horizontDirection, verticalDirection, dir);
+        } else
+            System.out.println(dir + " is not a valid direction");
+
+        for (int row = 0; row < ROWS; row++) {
+            for (int col = 0; col < COLS; col++) {
+                current = board[row][col];
+                if (current == null)
+                    continue;
+                current.setCanCombine(true);
+            }
+        }
+
+        if (canMove) {
+            spawnRandom();
+            // check dead
+        }
+
+    }
+
+    private boolean checkOutOfBounds(Direction dir, int row, int col) {
+
+        boolean isOutOfBounds = false;
+
+        switch (dir) {
+            case LEFT:
+                isOutOfBounds = col < 0;
+                break;
+            case RIGHT:
+                isOutOfBounds = col > COLS - 1;
+                break;
+            case UP:
+                isOutOfBounds = row < 0;
+                break;
+            case DOWN:
+                isOutOfBounds = row > ROWS - 1;
+                break;
+        }
+
+        return isOutOfBounds;
+    }
+
+    private boolean move(int row, int col, int horizontalDirection, int verticalDirection, Direction dir) {
+
+        boolean canMove = false;
+        Tile current = board[row][col];
+        Point temp = new Point(row, col);
+        if(current == null)
+            return false;
+        boolean move = true;
+        int newCol = col;
+        int newRow = row;
+
+        // move until all tiles are combined
+        while (move) {
+            newCol += horizontalDirection;
+            newRow += verticalDirection;
+
+            if (checkOutOfBounds(dir, newRow, newCol))
+                break;
+            // if empty tile
+            if (board[newRow][newCol] == null) {
+
+                board[newRow][newCol] = current;
+                board[newRow - verticalDirection][newCol - horizontalDirection] = null;
+                temp.setRow(newRow);
+                temp.setCol(newCol);
+                board[newRow][newCol].setSlideTo(temp);
+
+            }
+            // if tiles with same values
+            else if(board[newRow][newCol].getValue() == current.getValue()
+                    && board[newRow][newCol].canCombine()) {
+                board[newRow][newCol].setCanCombine(false);
+                board[newRow][newCol].setValue(board[newRow][newCol].getValue() * 2);
+                canMove = true;
+                board[newRow - verticalDirection][newCol - horizontalDirection] = null;
+                temp.setRow(newRow);
+                temp.setCol(newCol);
+                board[newRow][newCol].setSlideTo(temp);
+                //board[newRow][newCol].setCombineAnimation(true);
+                // add to score
+            } // can not combine
+            else
+                move = false;
+        }
+
+
+        return canMove;
     }
 
 }
