@@ -1,5 +1,7 @@
 package game;
 
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
@@ -45,6 +47,9 @@ public class GameBoard {
     // pattern minutes:seconds:ms
     private String formattedTime = "00:00:000";
 
+    //sounds
+    private AudioHandler audio;
+
     public GameBoard(int x, int y) {
 
         try {
@@ -71,8 +76,17 @@ public class GameBoard {
 
         createBoardImage();
         start();
+
+        audio = AudioHandler.getInstance();
+        audio.load("Cool-intro-music-118-bpm.mp3", "background");
+        audio.load("sound_ex_machina_Buttons - Stone Button.mp3", "click");
+        audio.adjustVolume("background", -10);
+        audio.adjustVolume("click", -5);
+        audio.play("background", Clip.LOOP_CONTINUOUSLY);
     }
 
+
+    //score writer
     private void createSaveData() {
 
         try {
@@ -425,6 +439,8 @@ public class GameBoard {
         }
 
         if (canMove) {
+            // play once and end
+            audio.play("click", 0);
             spawnRandom();
             // check dead
             checkDead();
