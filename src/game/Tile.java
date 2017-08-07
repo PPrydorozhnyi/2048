@@ -10,8 +10,8 @@ import java.awt.image.BufferedImage;
  */
 public class Tile {
 
-    public static final int WIDTH = 100;
-    public static final int HEIGHT = 100;
+    public static final int WIDTH = 105;
+    public static final int HEIGHT = 105;
     public static final int SLIDE_SPEED = 30;
     public static final int ARC_WIDTH = 15;
     public static final int ARC_HEIGHT = 15;

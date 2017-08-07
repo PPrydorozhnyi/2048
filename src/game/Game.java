@@ -13,8 +13,8 @@ public class Game extends JPanel implements KeyListener, Runnable{
 
     private static final long serialVersionUID = 1L;
     // because not resizeable
-    public static final int WIDTH = 500;
-    public static final int HEIGHT = 550;
+    public static final int WIDTH = 550;
+    public static final int HEIGHT = 600;
     public static final Font main = new Font("Comic Sans MS", Font.PLAIN, 28);
     private Thread game;
     private boolean running;
