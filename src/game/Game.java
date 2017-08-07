@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.security.Key;
 
 /**
  * Created by drake on 06/08/17.
@@ -33,6 +34,7 @@ public class Game extends JPanel implements KeyListener, Runnable{
     }
 
     private void update() {
+        Keyboard.update();
 
     }
 
@@ -55,12 +57,12 @@ public class Game extends JPanel implements KeyListener, Runnable{
 
     @Override
     public void keyPressed(KeyEvent e) {
-
+        Keyboard.keyPressed(e);
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-
+        Keyboard.keyReleased(e);
     }
 
     @Override
