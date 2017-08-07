@@ -1,10 +1,9 @@
 package game;
 
-import com.sun.rowset.internal.Row;
-
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.*;
 import java.util.Random;
 
 /**
@@ -29,7 +28,28 @@ public class GameBoard {
     private int x;
     private int y;
 
+    private int score = 0;
+    private int highScore = 0;
+    private Font scoreFont;
+    private int scoreHeight = 40;
+
+    // for saving
+    private String fileName = "SaveData.txt";
+    private String saveDataPath;
+
     public GameBoard(int x, int y) {
+
+        try {
+
+            // keep together with game
+            saveDataPath = GameBoard.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        scoreFont = Game.main.deriveFont(24f);
 
         this.x = x;
         this.y = y;
@@ -37,8 +57,62 @@ public class GameBoard {
         gameBoard = new BufferedImage(BOARD_WIDTH, BOARD_HEIGHT, BufferedImage.TYPE_INT_RGB);
         finalBoard = new BufferedImage(BOARD_WIDTH, BOARD_HEIGHT, BufferedImage.TYPE_INT_RGB);
 
+        loadHighScore();
+
         createBoardImage();
         start();
+    }
+
+    private void createSaveData() {
+
+        try {
+            File file = new File(saveDataPath, fileName);
+
+            FileWriter output = new FileWriter(file);
+
+            BufferedWriter writer = new BufferedWriter(output);
+            writer.write("" + 0);
+            //create fastest time
+            writer.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void loadHighScore() {
+        try {
+            File f = new File(saveDataPath, fileName);
+
+            if (!f.isFile()) {
+                createSaveData();
+            }
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
+            highScore = Integer.parseInt(reader.readLine());
+            //read fastest time
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setHighScore() {
+        FileWriter output = null;
+
+        try {
+            File f = new File(saveDataPath, fileName);
+            output = new FileWriter(f);
+            BufferedWriter writer = new BufferedWriter(output);
+
+            writer.write("" + highScore);
+
+            writer.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void createBoardImage() {
@@ -119,6 +193,13 @@ public class GameBoard {
 
         g.drawImage(finalBoard, x, y, null);
         g2d.dispose();
+
+        g.setColor(Color.lightGray);
+        g.setFont(scoreFont);
+        g.drawString("" + score, 30, scoreHeight);
+        g.setColor(Color.red);
+        g.drawString("High Score: " + highScore,
+                Game.WIDTH - DrawUtils.getMessageWidth("High Score: " + highScore, scoreFont, g) - 20, scoreHeight);
     }
 
     public void update() {
@@ -126,6 +207,9 @@ public class GameBoard {
         Tile current;
 
         checkKeys();
+
+        if (score >= highScore)
+            highScore = score;
 
         for (int row = 0; row < ROWS; row++) {
             for (int col = 0; col < COLS; col++) {
@@ -268,6 +352,7 @@ public class GameBoard {
             lost = true;
 
         //setHighScore(score);
+        setHighScore();
     }
 
     private boolean checkSurroundingTiles(int row, int col, Tile current) {
@@ -371,6 +456,7 @@ public class GameBoard {
                 board[newRow][newCol].setSlideTo(temp);
                 board[newRow][newCol].setCombineAnimation(true);
                 // add to score
+                score += board[newRow][newCol].getValue();
             } // can not combine
             else
                 move = false;
