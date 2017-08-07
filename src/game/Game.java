@@ -14,11 +14,12 @@ public class Game extends JPanel implements KeyListener, Runnable{
 
     private static final long serialVersionUID = 1L;
     // because not resizeable
-    public static final int WIDTH = 480;
-    public static final int HEIGHT = 640;
+    public static final int WIDTH = 400;
+    public static final int HEIGHT = 400;
     public static final Font main = new Font("Comic Sans MS", Font.PLAIN, 28);
     private Thread game;
     private boolean running;
+    private GameBoard board;
     // buffered image for the screen
     private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 
@@ -31,9 +32,12 @@ public class Game extends JPanel implements KeyListener, Runnable{
         setFocusable(true);
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         addKeyListener(this);
+
+        board = new GameBoard(WIDTH / 2 - GameBoard.BOARD_WIDTH / 2, HEIGHT - GameBoard.BOARD_HEIGHT - 10);
     }
 
     private void update() {
+        board.update();
         Keyboard.update();
 
     }
@@ -42,6 +46,7 @@ public class Game extends JPanel implements KeyListener, Runnable{
         Graphics2D g = (Graphics2D)image.getGraphics();
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, WIDTH, HEIGHT);
+        board.render(g);
         g.dispose();
         // render board
 
