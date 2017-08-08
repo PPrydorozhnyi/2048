@@ -4,11 +4,11 @@
   <headerType>gui</headerType>
   <jar>/home/drake/Java Projects/2048/out/artifacts/2048_jar/2048.jar</jar>
   <outfile>/home/drake/Java Projects/2048/out/artifacts/2048_jar/2048.exe</outfile>
-  <errTitle>SimpleApp</errTitle>
+  <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>
   <priority>normal</priority>
-  <downloadUrl>http://java.com/download</downloadUrl>
+  <downloadUrl>http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html</downloadUrl>
   <supportUrl></supportUrl>
   <stayAlive>false</stayAlive>
   <restartOnCrash>false</restartOnCrash>

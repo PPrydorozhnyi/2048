@@ -1,15 +1,16 @@
 package game;
 
+import gui.GuiScreen;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
 /**
  * Created by drake on 06/08/17.
  */
-public class Game extends JPanel implements KeyListener, Runnable{
+public class Game extends JPanel implements KeyListener, Runnable, MouseListener, MouseMotionListener{
 
     private static final long serialVersionUID = 1L;
     // because not resizeable
@@ -18,7 +19,6 @@ public class Game extends JPanel implements KeyListener, Runnable{
     public static final Font main = new Font("Comic Sans MS", Font.PLAIN, 28);
     private Thread game;
     private boolean running;
-    private GameBoard board;
     // buffered image for the screen
     private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 
@@ -27,16 +27,21 @@ public class Game extends JPanel implements KeyListener, Runnable{
     private long elapsed;
     private boolean set;
 
+    //GUI
+    private GuiScreen screen;
+
     public Game() {
         setFocusable(true);
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         addKeyListener(this);
+        addMouseListener(this);
+        addMouseMotionListener(this);
 
-        board = new GameBoard(WIDTH / 2 - GameBoard.BOARD_WIDTH / 2, HEIGHT - GameBoard.BOARD_HEIGHT - 25);
+        screen = GuiScreen.getInstance();
     }
 
     private void update() {
-        board.update();
+        screen.update();
         Keyboard.update();
 
     }
@@ -45,7 +50,7 @@ public class Game extends JPanel implements KeyListener, Runnable{
         Graphics2D g = (Graphics2D)image.getGraphics();
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, WIDTH, HEIGHT);
-        board.render(g);
+        screen.render(g);
         g.dispose();
         // render board
 
@@ -137,5 +142,41 @@ public class Game extends JPanel implements KeyListener, Runnable{
         running = false;
         System.exit(0);
 
+    }
+
+    // for GUI
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        screen.mousePressed(e);
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        screen.mouseReleased(e);
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        screen.mouseDragged(e);
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        screen.mouseMoved(e);
     }
 }
