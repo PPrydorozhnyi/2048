@@ -30,7 +30,7 @@ public class GuiPanel {
     }
 
     public void remove(GuiButton button) {
-        buttons.remove(button)
+        buttons.remove(button);
     }
 
     public void mousePressed(MouseEvent e) {

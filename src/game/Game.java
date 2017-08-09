@@ -1,6 +1,7 @@
 package game;
 
 import gui.GuiScreen;
+import gui.MainMenuPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,6 +39,8 @@ public class Game extends JPanel implements KeyListener, Runnable, MouseListener
         addMouseMotionListener(this);
 
         screen = GuiScreen.getInstance();
+        screen.add("Menu", new MainMenuPanel());
+        screen.setCurrentPanel("Menu");
     }
 
     private void update() {
