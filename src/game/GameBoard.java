@@ -577,4 +577,8 @@ public class GameBoard {
         return canMove;
     }
 
+    public Tile[][] getBoard() {
+        return board;
+    }
+
 }
