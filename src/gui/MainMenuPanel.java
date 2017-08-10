@@ -14,7 +14,7 @@ public class MainMenuPanel extends GuiPanel {
 
     private Font titleFont = Game.main.deriveFont(100f);
     private Font creatorFont = Game.main.deriveFont(24f);
-    private String title = "2048";
+    private String title = String.valueOf(Game.wonValue);
     private String creator = "By DRAKE";
     private int buttonWidth = 220;
     private int buttonHeight = 90;

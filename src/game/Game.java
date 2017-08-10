@@ -13,6 +13,8 @@ import java.awt.image.BufferedImage;
  */
 public class Game extends JPanel implements KeyListener, Runnable, MouseListener, MouseMotionListener{
 
+    public static int wonValue = 2048;
+
     private static final long serialVersionUID = 1L;
     // because not resizeable
     public static final int WIDTH = 550;
@@ -80,11 +82,14 @@ public class Game extends JPanel implements KeyListener, Runnable, MouseListener
     @Override
     public void run() {
 
+        //TODO check fps/ because keyboard coold not update in time
         int fps = 0;
         int updates = 0;
         long fpsTimer = System.currentTimeMillis();
         // how many nanosec between updates
         double nsPerUpdate = 1000000000.0 / 60;
+        double now;
+        boolean shouldRender;
 
         //last update time in nanosec
         double then = System.nanoTime();
@@ -92,8 +97,8 @@ public class Game extends JPanel implements KeyListener, Runnable, MouseListener
 
         while (running) {
 
-            boolean shouldRender = false;
-            double now = System.nanoTime();
+            shouldRender = false;
+            now = System.nanoTime();
             unprocessed += (now - then) / nsPerUpdate;
             then = now;
 

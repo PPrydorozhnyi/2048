@@ -30,7 +30,7 @@ public class Leaderboards {
         topTimes = new ArrayList<Long>();
     }
 
-    public Leaderboards getInstance() {
+    public static Leaderboards getInstance() {
         if (lBoard == null)
             lBoard = new Leaderboards();
 

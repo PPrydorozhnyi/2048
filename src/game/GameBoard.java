@@ -30,11 +30,11 @@ public class GameBoard {
     private int x;
     private int y;
 
-    private int score = 0;
-    private int highScore = 0;
-    private Font scoreFont;
     private int scoreHeight = 40;
     private int timeHeight = 90;
+    private ScoreManager scores;
+    private Leaderboards lBoard;
+    private int saveCount;
 
     // for saving
     private String fileName = "SaveData.txt";
@@ -42,27 +42,13 @@ public class GameBoard {
 
     //for time
     private long elapsedMS;
-    private long fastestMS;
     private long startTime;
-    // pattern minutes:seconds:ms
-    private String formattedTime = "00:00:000";
+
 
     //sounds
     private AudioHandler audio;
 
     public GameBoard(int x, int y) {
-
-        try {
-
-            // keep together with game
-            saveDataPath = GameBoard.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        scoreFont = Game.main.deriveFont(24f);
 
         this.x = x;
         this.y = y;
@@ -70,12 +56,7 @@ public class GameBoard {
         gameBoard = new BufferedImage(BOARD_WIDTH, BOARD_HEIGHT, BufferedImage.TYPE_INT_RGB);
         finalBoard = new BufferedImage(BOARD_WIDTH, BOARD_HEIGHT, BufferedImage.TYPE_INT_RGB);
 
-        loadHighScore();
-
-        startTime = System.nanoTime();
-
         createBoardImage();
-        start();
 
         audio = AudioHandler.getInstance();
         audio.load("Cool-intro-music-118-bpm.mp3", "background");
@@ -83,71 +64,41 @@ public class GameBoard {
         audio.adjustVolume("background", -10);
         audio.adjustVolume("click", -5);
         audio.play("background", Clip.LOOP_CONTINUOUSLY);
-    }
 
-
-    //score writer
-    private void createSaveData() {
-
-        try {
-            File file = new File(saveDataPath, fileName);
-
-            FileWriter output = new FileWriter(file);
-
-            BufferedWriter writer = new BufferedWriter(output);
-            writer.write("" + 0);
-            //create fastest time
-            writer.newLine();
-            writer.write("" + Integer.MAX_VALUE);
-            writer.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private void loadHighScore() {
-        try {
-            File f = new File(saveDataPath, fileName);
-
-            if (!f.isFile()) {
-                createSaveData();
+        // new scores
+        lBoard = Leaderboards.getInstance();
+        lBoard.loadScores();
+        scores = new ScoreManager(this);
+        scores.setBestTime(lBoard.getFastestTime());
+        scores.setCurrentTopScore(lBoard.getHighScore());
+        if (scores.newGame()) {
+            start();
+            scores.saveGame();
+        } else {
+            for (int i = 0; i < scores.getBoard().length; i++ ) {
+                if (scores.getBoard()[i] == 0)
+                    continue;
+                spawn(i / ROWS, i % COLS, scores.getBoard()[i]);
             }
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
-            highScore = Integer.parseInt(reader.readLine());
-            //read fastest time
-            fastestMS = Long.parseLong(reader.readLine());
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            // prevent game loop
+            lost = checkDead();
+            won = checkWon();
         }
     }
 
-    private void setHighScore() {
-        FileWriter output = null;
-
-        try {
-            File f = new File(saveDataPath, fileName);
-            output = new FileWriter(f);
-            BufferedWriter writer = new BufferedWriter(output);
-
-            writer.write("" + highScore);
-            writer.newLine();
-            if (elapsedMS <= fastestMS && won)
-                writer.write("" + elapsedMS);
-            else
-                writer.write("" + fastestMS);
-
-            writer.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void reset() {
+        board = new Tile[ROWS][COLS];
+        start();
+        scores.saveGame();
+        lost = false;
+        won = false;
+        hasStarted = false;
+        startTime = System.nanoTime();
+        elapsedMS = 0;
+        saveCount = 0;
     }
 
-    private String formatTime(long millis) {
+/*    private String formatTime(long millis) {
         String formattedTime;
 
         String hourFormat = "";
@@ -202,7 +153,7 @@ public class GameBoard {
 
         return formattedTime;
 
-    }
+    }*/
 
     private void createBoardImage() {
         int x, y;
@@ -225,6 +176,10 @@ public class GameBoard {
     private void start() {
         for (int i = 0; i < startingTiles; i++)
             spawnRandom();
+    }
+
+    private void  spawn(int row, int col, int value) {
+        board[row][col] = new Tile(value, getTileX(col), getTileY(row));
     }
 
     private void spawnRandom() {
@@ -283,38 +238,30 @@ public class GameBoard {
 
         g.drawImage(finalBoard, x, y, null);
         g2d.dispose();
-
-        g.setColor(Color.lightGray);
-        g.setFont(scoreFont);
-        g.drawString("" + score, 30, scoreHeight);
-        g.setColor(Color.red);
-        g.drawString("High Score: " + highScore,
-                Game.WIDTH - DrawUtils.getMessageWidth("High Score: " + highScore, scoreFont, g) - 20, scoreHeight);
-
-        g.setColor(Color.black);
-        g.drawString("Time: " + formattedTime, 30, timeHeight);
-        g.setColor(Color.red);
-        //g.drawString("Best time: " + formattedTime,
-                //Game.WIDTH + DrawUtils.getMessageWidth("Best time: " + formattedTime, scoreFont, g), timeHeight);
-        g.drawString("Best time: " + formatTime(fastestMS),
-                Game.WIDTH - DrawUtils.getMessageWidth("Best time: " + formatTime(fastestMS), scoreFont, g) - 20, timeHeight);
     }
 
     public void update() {
 
         Tile current;
 
+        saveCount++;
+        if (saveCount >= 120) {
+            saveCount = 0;
+            scores.saveGame();
+        }
+
         if (!won && !lost)
             if (hasStarted) {
                 elapsedMS = (System.nanoTime() - startTime) / 1000000;
-                formattedTime = formatTime(elapsedMS);
+                scores.setTime(elapsedMS);
             } else
                 startTime = System.nanoTime();
 
         checkKeys();
 
-        if (score >= highScore)
-            highScore = score;
+        if (scores.getCurrentScore() >= scores.getCurrentTopScore()) {
+            scores.setCurrentTopScore(scores.getCurrentScore());
+        }
 
         for (int row = 0; row < ROWS; row++) {
             for (int col = 0; col < COLS; col++) {
@@ -324,9 +271,8 @@ public class GameBoard {
                 current.update();
                 //reset position
                 resetPosition(current, row, col);
-                if (current.getValue() == 2048)
-                    won = true;
-                setHighScore();
+                if (current.getValue() == Game.wonValue)
+                    setWon(true);
             }
         }
     }
@@ -384,7 +330,70 @@ public class GameBoard {
         }
 
         if (!hasStarted)
-            hasStarted = true;
+            hasStarted = !lost;
+    }
+
+    public int getHighestTileValue() {
+        int value = 2;
+
+        for (int row = 0; row < ROWS; row++)
+            for (int col = 0; col < COLS; col++) {
+                if (board[row][col] == null)
+                    continue;
+                if (board[row][col].getValue() > value)
+                    value = board[row][col].getValue();
+            }
+
+        return value;
+
+    }
+
+    public boolean isLost() {
+        return lost;
+    }
+
+    public void setLost(boolean lost) {
+        if (!this.lost && lost) {
+            lBoard.addTile(getHighestTileValue());
+            lBoard.addScore(scores.getCurrentScore());
+            lBoard.saveScores();
+        }
+
+        this.lost = lost;
+
+    }
+
+    public boolean isWon() {
+        return won;
+    }
+
+    public void setWon(boolean won) {
+        if (!this.won && won) {
+            lBoard.addTime(scores.getTime());
+            lBoard.saveScores();
+        }
+
+        this.won = won;
+    }
+
+    public ScoreManager getScores() {
+        return scores;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
     }
 
     private void moveTiles(Direction dir) {
@@ -443,27 +452,32 @@ public class GameBoard {
             audio.play("click", 0);
             spawnRandom();
             // check dead
-            checkDead();
+            setLost(checkDead());
         }
 
     }
 
-    private void checkDead() {
+    private boolean checkDead() {
         for (int row = 0; row < ROWS; row++)
             for (int col = 0; col < COLS; col++) {
             if (board[row][col] == null)
-                return;
+                return false;
             if (checkSurroundingTiles(row, col, board[row][col]))
-                return;
+                return false;
             }
 
-            lost = true;
+        return true;
+    }
 
-        if (score >= highScore)
-            highScore = score;
-
-        //setHighScore(score);
-        setHighScore();
+    public boolean checkWon() {
+        for (int row = 0; row < ROWS; row++)
+            for (int col = 0; col < COLS; col++) {
+                if (board[row][col] == null)
+                    continue;
+                if (board[row][col].getValue() >= Game.wonValue)
+                    return true;
+            }
+        return false;
     }
 
     private boolean checkSurroundingTiles(int row, int col, Tile current) {
@@ -567,7 +581,8 @@ public class GameBoard {
                 board[newRow][newCol].setSlideTo(temp);
                 board[newRow][newCol].setCombineAnimation(true);
                 // add to score
-                score += board[newRow][newCol].getValue();
+                scores.setCurrentScore(scores.getCurrentScore() +
+                        board[newRow][newCol].getValue());
             } // can not combine
             else
                 move = false;
