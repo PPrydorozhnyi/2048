@@ -25,7 +25,7 @@ public class GuiButton {
     private Font font = Game.main.deriveFont(22f);
     private AudioHandler audio;
 
-    public GuiButton (int x, int y, int width, int height) {
+    public GuiButton(int x, int y, int width, int height) {
         clickBox = new Rectangle(x, y, width, height);
         actionListeners = new ArrayList<ActionListener>();
         released = new Color(173, 177, 179);
@@ -34,10 +34,11 @@ public class GuiButton {
 
         audio = AudioHandler.getInstance();
         audio.load("multimedia_button_click_024.mp3", "pick");
+        audio.adjustVolume("pick", -15);
 
     }
 
-    public void update(){
+    public void update() {
 
     }
 
@@ -62,7 +63,7 @@ public class GuiButton {
         g.setFont(font);
         g.drawString(text,
                 clickBox.x + clickBox.width / 2 - DrawUtils.getMessageWidth(text, font, g) / 2,
-                clickBox.y + clickBox.height / 2 + DrawUtils.getMessageHeight(text,font, g) / 2
+                clickBox.y + clickBox.height / 2 + DrawUtils.getMessageHeight(text, font, g) / 2
         );
 
     }
@@ -124,7 +125,7 @@ public class GuiButton {
 
     }
 
-    public  void setText(String text) {
+    public void setText(String text) {
 
         this.text = text;
 

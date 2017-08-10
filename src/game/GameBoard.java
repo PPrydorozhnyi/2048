@@ -61,7 +61,7 @@ public class GameBoard {
         audio = AudioHandler.getInstance();
         audio.load("Cool-intro-music-118-bpm.mp3", "background");
         audio.load("sound_ex_machina_Buttons - Stone Button.mp3", "click");
-        audio.adjustVolume("background", -10);
+        audio.adjustVolume("background", -30);
         audio.adjustVolume("click", -5);
         audio.play("background", Clip.LOOP_CONTINUOUSLY);
 
@@ -69,6 +69,7 @@ public class GameBoard {
         lBoard = Leaderboards.getInstance();
         lBoard.loadScores();
         scores = new ScoreManager(this);
+        scores.loadGame();
         scores.setBestTime(lBoard.getFastestTime());
         scores.setCurrentTopScore(lBoard.getHighScore());
         if (scores.newGame()) {
@@ -98,63 +99,6 @@ public class GameBoard {
         saveCount = 0;
     }
 
-/*    private String formatTime(long millis) {
-        String formattedTime;
-
-        String hourFormat = "";
-        int hours = (int) (millis / 3600000);
-        if (hours >= 1) {
-            millis -= hours * 3600000;
-
-            if (hours < 10)
-                hourFormat = "0" + hours;
-            else
-                hourFormat = "" + hours;
-
-            hourFormat += ":";
-        }
-
-
-        String minuteFormat;
-        int minutes = (int) (millis / 60000);
-        if (minutes >= 1) {
-            millis -= minutes * 60000;
-
-            if (minutes < 10)
-                minuteFormat = "0" + minutes;
-            else
-                minuteFormat = "" + minutes;
-        }
-        else
-            minuteFormat = "00";
-
-        String secondFormat;
-        int seconds = (int) (millis / 1000);
-        if (seconds >= 1) {
-            millis -= seconds * 1000;
-
-            if (minutes < 10)
-                secondFormat = "0" + seconds;
-            else
-                secondFormat = "" + seconds;
-        }
-        else
-            secondFormat = "00";
-
-        String milliFormat;
-        if (millis > 99)
-            milliFormat = "" + millis;
-        else if (millis > 9)
-            milliFormat = "0" + millis;
-        else
-            milliFormat = "00" + 0;
-
-        formattedTime = hourFormat + minuteFormat + ":" + secondFormat + ":" + milliFormat;
-
-        return formattedTime;
-
-    }*/
-
     private void createBoardImage() {
         int x, y;
 
@@ -174,6 +118,7 @@ public class GameBoard {
     }
 
     private void start() {
+        System.out.println("fuck");
         for (int i = 0; i < startingTiles; i++)
             spawnRandom();
     }

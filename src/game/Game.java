@@ -2,6 +2,7 @@ package game;
 
 import gui.GuiScreen;
 import gui.MainMenuPanel;
+import gui.PlayPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -42,6 +43,7 @@ public class Game extends JPanel implements KeyListener, Runnable, MouseListener
 
         screen = GuiScreen.getInstance();
         screen.add("Menu", new MainMenuPanel());
+        screen.add("Play", new PlayPanel());
         screen.setCurrentPanel("Menu");
     }
 

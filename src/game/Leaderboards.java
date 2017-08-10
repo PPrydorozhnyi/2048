@@ -40,8 +40,8 @@ public class Leaderboards {
     public void addScore(int score) {
         for (int i = 0; i < topScores.size(); i++) {
             if (score > topScores.get(i)) {
-                topScores.remove(topScores.size() - 1);
                 topScores.add(i, score);
+                topScores.remove(topScores.size() - 1);
                 // because won`t stop add higher score
                 return;
             }
@@ -51,8 +51,8 @@ public class Leaderboards {
     public void addTile(int tileValue) {
         for (int i = 0; i < topTiles.size(); i++) {
             if (tileValue > topTiles.get(i)) {
-                topTiles.remove(topTiles.size() - 1);
                 topTiles.add(i, tileValue);
+                topTiles.remove(topTiles.size() - 1);
                 return;
             }
         }
@@ -61,8 +61,8 @@ public class Leaderboards {
     public void addTime(long millis) {
         for (int i = 0; i < topTimes.size(); i++) {
             if (millis < topTimes.get(i)) {
-                topTimes.remove(topTimes.size() - 1);
                 topTimes.add(i, millis);
+                topTimes.remove(topTimes.size() - 1);
                 return;
             }
         }
@@ -71,6 +71,7 @@ public class Leaderboards {
     public void loadScores() {
         try {
             File f = new File(filePath, highScores);
+
             if (!f.isFile()) {
                 createSaveData();
             }
@@ -144,28 +145,19 @@ public class Leaderboards {
 
     private void createSaveData() {
 
-        FileWriter output = null;
-
         try {
-            // TODO refactor add separate method for writing
-            File f = new File(filePath, highScores);
-            output = new FileWriter(f);
+            File file = new File(filePath, highScores);
+
+            FileWriter output = new FileWriter(file);
             BufferedWriter writer = new BufferedWriter(output);
-
             writer.write("0-0-0-0-0");
-
             writer.newLine();
-
             writer.write("0-0-0-0-0");
-
             writer.newLine();
-
-            writer.write(Long.MAX_VALUE + "-" + Long.MAX_VALUE + "-" + Long.MAX_VALUE + "-" + Long.MAX_VALUE + "-" + Long.MAX_VALUE );
-
+            writer.write(Integer.MAX_VALUE + "-" + Integer.MAX_VALUE + "-" + Integer.MAX_VALUE + "-" + Integer.MAX_VALUE + "-" + Integer.MAX_VALUE);
             writer.close();
-
-        } catch (Exception e) {
-
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

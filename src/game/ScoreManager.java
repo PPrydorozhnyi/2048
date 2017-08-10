@@ -47,9 +47,9 @@ public class ScoreManager {
         newGame = true;
 
         try {
-
             File f = new File(filePath, temp);
             output = new FileWriter(f);
+
             BufferedWriter writer = new BufferedWriter(output);
             writer.write("" + 0);
             writer.newLine();
@@ -59,19 +59,17 @@ public class ScoreManager {
             writer.newLine();
             writer.write("" + 0);
             writer.newLine();
-
-            // markup score
-            for (int row = 0; row < GameBoard.ROWS; row++)
+            for (int row = 0; row < GameBoard.ROWS; row++) {
                 for (int col = 0; col < GameBoard.COLS; col++) {
-                    if (row == GameBoard.ROWS - 1 && col == GameBoard.COLS - 1) {
+                    if(row == GameBoard.ROWS - 1 && col == GameBoard.COLS - 1){
                         writer.write("" + 0);
-                    } else {
+                    }
+                    else{
                         writer.write(0 + "-");
                     }
                 }
-
+            }
             writer.close();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -115,6 +113,7 @@ public class ScoreManager {
                     }
                 }
 
+                writer.close();
         } catch (Exception e) {
 
         }
@@ -170,7 +169,7 @@ public class ScoreManager {
     }
 
     public void setTime(long time) {
-        this.time = time;
+        this.time = time + startingTime;
     }
 
     public long getBestTime() {

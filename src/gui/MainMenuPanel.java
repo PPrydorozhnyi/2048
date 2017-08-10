@@ -35,6 +35,10 @@ public class MainMenuPanel extends GuiPanel {
         scoreButton.setText("Score");
         quitButton.setText("Qiit");
 
+        add(playButton);
+        add(scoreButton);
+        add(quitButton);
+
         playButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -56,9 +60,6 @@ public class MainMenuPanel extends GuiPanel {
             }
         });
 
-        add(playButton);
-        add(scoreButton);
-        add(quitButton);
     }
 
     @Override
