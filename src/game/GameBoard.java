@@ -62,7 +62,7 @@ public class GameBoard {
         audio.load("Cool-intro-music-118-bpm.mp3", "background");
         audio.load("sound_ex_machina_Buttons - Stone Button.mp3", "click");
         audio.adjustVolume("background", -30);
-        audio.adjustVolume("click", -5);
+        audio.adjustVolume("click", -15);
         audio.play("background", Clip.LOOP_CONTINUOUSLY);
 
         // new scores
@@ -143,8 +143,8 @@ public class GameBoard {
             current = board[row][col];
             // picking value of the tile
             if (current == null) {
-                value = random.nextInt(10) < 9 ? 2 : 4;
-                //value = random.nextInt(10) < 9 ? 512 : 1024;
+                //value = random.nextInt(10) < 9 ? 2 : 4;
+                value = random.nextInt(10) < 9 ? 512 : 1024;
                 tile = new Tile(value, getTileX(col), getTileY(row));
                 board[row][col] = tile;
                 isValid = false;

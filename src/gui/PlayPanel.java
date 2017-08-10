@@ -99,13 +99,13 @@ public class PlayPanel extends GuiPanel {
         g2d.fillRect(0, 0,info.getWidth(), info.getHeight());
         g2d.setColor(Color.lightGray);
         g2d.setFont(scoreFont);
-        g2d.drawString("" + scores.getCurrentScore(), 30, 40);
+        g2d.drawString("Score: " + scores.getCurrentScore(), 15, 40);
         g2d.setColor(Color.red);
         g2d.drawString("High Score: " + scores.getCurrentTopScore(),
                 Game.WIDTH - DrawUtils.getMessageWidth("High Score: " + scores.getCurrentTopScore(), scoreFont, g2d) - 20, 40);
         g2d.drawString("Best time: " + bestTimeF,
                 Game.WIDTH - DrawUtils.getMessageWidth("Best time: " + bestTimeF, scoreFont, g2d) - 20, 90);
-        g2d.drawString("Time: " + timeF, 30, 90);
+        g2d.drawString("Time: " + timeF, 15, 90);
         g2d.dispose();
 
         g.drawImage(info, 0, 0, null);

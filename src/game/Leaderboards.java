@@ -114,7 +114,7 @@ public class Leaderboards {
             output = new FileWriter(f);
             BufferedWriter writer = new BufferedWriter(output);
 
-            for (int i = 0; i < topScores.size(); i++) {
+            /*for (int i = 0; i < topScores.size(); i++) {
                 writer.write(topScores.get(i));
                 if (i != topScores.size() - 1)
                     writer.write("-");
@@ -134,8 +134,13 @@ public class Leaderboards {
                 writer.write("" + topTimes.get(i));
                 if (i != topTimes.size() - 1)
                     writer.write("-");
-            }
+            }*/
 
+            writer.write(topScores.get(0) + "-" + topScores.get(1) + "-" + topScores.get(2) + "-" + topScores.get(3) + "-" + topScores.get(4));
+            writer.newLine();
+            writer.write(topTiles.get(0) + "-" + topTiles.get(1) + "-" + topTiles.get(2) + "-" + topTiles.get(3) + "-" + topTiles.get(4));
+            writer.newLine();
+            writer.write(topTimes.get(0) + "-" + topTimes.get(1) + "-" + topTimes.get(2) + "-" + topTimes.get(3) + "-" + topTimes.get(4));
             writer.close();
 
         } catch (Exception e) {

@@ -44,6 +44,7 @@ public class Game extends JPanel implements KeyListener, Runnable, MouseListener
         screen = GuiScreen.getInstance();
         screen.add("Menu", new MainMenuPanel());
         screen.add("Play", new PlayPanel());
+        screen.add("Leaderboards", new LeaderboardsPanel());
         screen.setCurrentPanel("Menu");
     }
 
