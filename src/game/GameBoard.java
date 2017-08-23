@@ -118,7 +118,6 @@ public class GameBoard {
     }
 
     private void start() {
-        System.out.println("fuck");
         for (int i = 0; i < startingTiles; i++)
             spawnRandom();
     }
@@ -143,8 +142,8 @@ public class GameBoard {
             current = board[row][col];
             // picking value of the tile
             if (current == null) {
-                //value = random.nextInt(10) < 9 ? 2 : 4;
-                value = random.nextInt(10) < 9 ? 512 : 1024;
+                value = random.nextInt(10) < 9 ? 2 : 4;
+                //value = random.nextInt(10) < 9 ? 512 : 1024;
                 tile = new Tile(value, getTileX(col), getTileY(row));
                 board[row][col] = tile;
                 isValid = false;
